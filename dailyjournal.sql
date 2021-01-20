@@ -40,4 +40,6 @@ SELECT
             e.entry,
             e.mood_id
         FROM entry e
-        WHERE e.id = 1
+        WHERE e.id = 1;
+
+SELECT * FROM Entry ORDER BY id DESC;
