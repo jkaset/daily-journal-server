@@ -21,3 +21,23 @@ INSERT INTO `Mood` VALUES (null, "mad");
 INSERT INTO `Mood` VALUES (null, "smart");
 INSERT INTO `Mood` VALUES (null, "tired");
 INSERT INTO `Mood` VALUES (null, "great");
+
+SELECT
+		e.id,
+		e.date,
+		e.concept,
+		e.entry,
+		e.mood_id,
+		m.label mood_label
+FROM Entry e
+JOIN Mood m
+		ON m.id = e.mood_id;
+
+SELECT
+            e.id,
+            e.date,
+            e.concept,
+            e.entry,
+            e.mood_id
+        FROM entry e
+        WHERE e.id = 1

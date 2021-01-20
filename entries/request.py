@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from models import Entry
+from models import Mood
 
 
 def get_all_entries():
@@ -15,8 +16,11 @@ def get_all_entries():
             e.date,
             e.concept,
             e.entry,
-            e.mood_id
-        FROM entry e
+            e.mood_id,
+            m.label mood_label
+        FROM Entry e
+        JOIN Mood m
+            ON m.id = e.mood_id
         """)
 
         entries = []
@@ -27,6 +31,9 @@ def get_all_entries():
 
             entry = Entry(row['id'], row['date'], row['concept'], row['entry'], row['mood_id'])
 
+            mood = Mood(row['mood_id'], row['mood_label'])
+
+            entry.mood = mood.__dict__
             entries.append(entry.__dict__)
 
     return json.dumps(entries)
@@ -62,3 +69,4 @@ def delete_entry(id):
         DELETE FROM entry
         WHERE id = ?
         """, (id, ))
+
