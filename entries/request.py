@@ -1,6 +1,7 @@
 import sqlite3
 import json
-from models import Entry, Mood
+from models import Entry
+from models import Mood
 
 
 def get_all_entries():
@@ -32,6 +33,7 @@ def get_all_entries():
 
             mood = Mood(row['mood_id'], row['mood_label'])
 
+            entry.mood = mood.__dict__
             entries.append(entry.__dict__)
 
     return json.dumps(entries)
