@@ -122,3 +122,31 @@ def update_entry(id, new_entry):
         # Forces 204 response by main module
         return True
 
+def get_entries_by_word(q):
+
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            SELECT
+            e.id,
+            e.date,
+            e.concept,
+            e.entry,
+            e.mood_id
+        FROM Entry e
+        WHERE e.entry LIKE ?
+        """, ( "%" + q + "%" ))
+
+        entries = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            entry = Entry(row['id'], row['date'], row['concept'], row['entry'] , row['mood_id'])
+            entries.append(entry.__dict__)
+
+    return json.dumps(entries)
+

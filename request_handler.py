@@ -1,27 +1,28 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from entries import get_all_entries, get_single_entry, delete_entry, create_entry, update_entry
+from entries import get_all_entries, get_single_entry, delete_entry, create_entry, update_entry, get_entries_by_word
+from moods import get_all_moods
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
 # work together for a common purpose. In this case, that
 # common purpose is to respond to HTTP requests from a client.
 class HandleRequests(BaseHTTPRequestHandler):
-    def parse_url(self, path):
-        path_params = path.split("/")
-        resource = path_params[1]
-        id = None
+    # def parse_url(self, path):
+    #     path_params = path.split("/")
+    #     resource = path_params[1]
+    #     id = None
 
-        # Try to get the item at index 2
-        try:
+    #     # Try to get the item at index 2
+    #     try:
          
-            id = int(path_params[2])
-        except IndexError:
-            pass  # No route parameter exists: /animals
-        except ValueError:
-            pass  # Request had trailing slash: /animals/
+    #         id = int(path_params[2])
+    #     except IndexError:
+    #         pass  # No route parameter exists: /animals
+    #     except ValueError:
+    #         pass  # Request had trailing slash: /animals/
 
-        return (resource, id)  # This is a tuple
+    #     return (resource, id)  # This is a tuple
 
     # Here's a class function
     def _set_headers(self, status):
@@ -66,28 +67,31 @@ class HandleRequests(BaseHTTPRequestHandler):
         self._set_headers(200)
         response = {}
 
-        # Your new console.log() that outputs to the terminal
-        (resource, id) = self.parse_url(self.path)
+        parsed = self.parse_url(self.path)
 
-        if resource == "entries":
-          if id is not None:
-            response = f"{get_single_entry(id)}"
+        if len(parsed) == 2:
+            ( resource, id ) = parsed
 
-          else:
-            response= f"{get_all_entries()}"
+            if resource == "entries":
+                if id is not None:
+                    response = f"{get_single_entry(id)}"
+                else:
+                    response = f"{get_all_entries()}"
+            if resource == "moods":
+                if id is not None:
+                    print("none")
+                else:
+                    response = f"{get_all_moods()}"
 
+        elif len(parsed) == 3:
+            ( resource, key, value ) = parsed
+       
+            if resource == "entries" and key == "q":
+                response = get_entries_by_word(value)
         # This weird code sends a response back to the client
         self.wfile.write(f"{response}".encode())
 
-    # Here's a method on the class that overrides the parent's method.
-    # It handles any POST request.
-    # def do_POST(self):
-    #     # Set response code to 'Created'
-    #     self._set_headers(201)
-
-    #     content_len = int(self.headers.get('content-length', 0))
-    #     post_body = self.rfile.read(content_len)
-    #     response = f"received post request:<br>{post_body}"
+   
         
     #     self.wfile.write(response.encode())
     def do_POST(self):
