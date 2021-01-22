@@ -1,6 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from entries import get_all_entries, get_single_entry, delete_entry, create_entry, update_entry
+from entries import get_all_entries, get_single_entry, delete_entry, create_entry, update_entry, get_entries_by_word
 from moods import get_all_moods
 
 # Here's a class. It inherits from another class.
@@ -84,8 +84,10 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_all_moods()}"
 
         elif len(parsed) == 3:
-                ( resource, key, value ) = parsed
+            ( resource, key, value ) = parsed
        
+            if resource == "entries" and key == "q":
+                response = get_entries_by_word(value)
         # This weird code sends a response back to the client
         self.wfile.write(f"{response}".encode())
 
